@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: import.meta.env.API,
+    baseURL: "https://recipesfinder-h79m.onrender.com/api",
 });
 
 export default api;
