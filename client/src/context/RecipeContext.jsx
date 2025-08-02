@@ -65,7 +65,7 @@ export const RecipeProvider = ({ children }) => {
             }
         } catch (error) {
             const errMsg = "An unexpected error occurred.";
-            dispatch({ type: actionType.FETCH_ALLRECIPE_FAILURE, payload: errMsg });
+            dispatch({ type: actionType.FETCH_ALLRECIPE_FAILURE, payload: error });
             return { success: false, error: errMsg }
         }
     }
