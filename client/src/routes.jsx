@@ -15,15 +15,16 @@ const routes = () => {
     return (
         <Routes>
             <Route path='/login' element={<Login />} />
-            <Route path='/signup' element={<Signup />} />
+            <Route path='/register' element={<Signup />} />
 
             <Route path='/' element={<Home />} />
-
-            <Route path='/' element={<ProtectedRoute />}>
-                <Route path='/recipes' element={<Recipes />} />
-                <Route path='/add' element={<AddRecipe />} />
+            <Route path='/recipes' element={<Recipes />} />
+            <Route path='/share' element={<AddRecipe />} />
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/recipe/:id' element={<Recipe />} />
+
+
+            <Route path='/' element={<ProtectedRoute />}>
             </Route>
 
             <Route path='*' element={<h1>Page not found</h1>} />

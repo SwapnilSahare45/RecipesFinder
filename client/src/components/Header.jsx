@@ -1,96 +1,59 @@
-import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
-import UserContext from '../context/UserContext';
+import { Link } from "react-router-dom";
+import { MdMenu, MdClose } from "react-icons/md";
+import { useState } from "react";
+import { FaCircleUser } from "react-icons/fa6";
 
 const Header = () => {
-    const { isAuthenticated } = useContext(UserContext);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showMobileNav, setShowMobileNav] = useState(false);
 
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
+  const toggleNav = () => {
+    setShowMobileNav(!showMobileNav);
+  };
 
+  return (
+    <nav className="flex items-center justify-between font-mono py-4 border-b bg-white relative">
+      {/* Logo */}
+      <h1 className="font-door text-2xl text-center text-lime-500 underline underline-offset-4 decoration-1 pl-4">
+        CookBook
+      </h1>
 
-    return (
-        <header className='h-16 bg-warm-tomato flex justify-between items-center fixed top-0 w-full z-40 md:h-20'>
-            <div className='ml-4 md:ml-6'>
-                <h1 className='text-2xl font-bold text-white md:text-3xl'>Recipe Master</h1>
-            </div>
+      {/* Tablet & Desktop Nav */}
+      <ul className="hidden text-lg justify-center gap-12 md:flex">
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/recipes">Recipes</Link></li>
+        <li><Link to="/share">Share Recipe</Link></li>
+      </ul>
 
-            {/* Mobile Menu Button */}
-            <button className='w-7 mr-3 md:hidden' onClick={toggleMenu}>
-                {!isMenuOpen && (
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#fafafa">
-                        <path d="M4 6H20M4 12H20M4 18H20" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
-                    </svg>
-                )}
-                {/* Close Icon (when menu is open) */}
-                {isMenuOpen && (
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#fafafa">
-                        <path d="M6 18L18 6M6 6L18 18" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
-                    </svg>
-                )}
-            </button>
+      {/* Tablet & Desktop Auth */}
+      <div className="hidden gap-4 text-sm md:hidden md:pr-4">
+        <Link to="/login" className="bg-fuchsia-500 text-white py-2 px-4 hover:bg-fuchsia-600 transition">Login</Link>
+        <Link to="/register" className="bg-fuchsia-500 text-white py-2 px-4 hover:bg-fuchsia-600 transition">Register</Link>
+      </div>
 
-            {/* Desktop Navigation */}
-            <nav className='hidden md:flex'>
-                <ul className='flex gap-8 text-lg text-white'>
-                    <li>
-                        <Link to="/">Home</Link>
-                    </li>
-                    <li>
-                        <Link to="/recipes">Recipes</Link>
-                    </li>
-                    <li>
-                        <Link to="/add">Add Recipe</Link>
-                    </li>
-                </ul>
-            </nav>
+      <Link className="hidden mr-16 md:block">
+        <FaCircleUser fill="#E12AFB" className="text-[32px]" />
+      </Link>
 
-            {/* Mobile Navigation Menu */}
-            {isMenuOpen && (
-                <div className='fixed top-16 left-0 w-full bg-warm-tomato z-30 md:hidden'>
-                    <ul className='flex flex-col items-center gap-4 py-4 text-lg text-white'>
-                        <li>
-                            <Link to="/" onClick={toggleMenu}>Home</Link>
-                        </li>
-                        <li>
-                            <Link to="/recipes" onClick={toggleMenu}>Recipes</Link>
-                        </li>
-                        <li>
-                            <Link to="/add" onClick={toggleMenu}>Add Recipe</Link>
-                        </li>
-                        {!isAuthenticated ? (
-                            <>
-                                <li>
-                                    <Link to='/login' onClick={toggleMenu} className='bg-warm-orange text-white px-5 py-2 rounded-md shadow-md'>Login</Link>
-                                </li>
-                                <li>
-                                    <Link to='/signup' onClick={toggleMenu} className='bg-warm-orange text-white px-5 py-2 rounded-md shadow-md'>Signup</Link>
-                                </li>
-                            </>
-                        ) : (
-                            <li>
-                                <Link to="/profile" onClick={toggleMenu}>Profile</Link>
-                            </li>
-                        )}
-                    </ul>
-                </div>
-            )}
+      {/* Mobile Button */}
+      <button onClick={toggleNav} className="pr-4 md:hidden">
+        {showMobileNav ? <MdClose className="text-2xl" /> : <MdMenu className="text-2xl" />}
+      </button>
 
-            {/* Desktop Authentication Links */}
-            {!isAuthenticated ? (
-                <div className='mr-6 space-x-3 hidden md:flex'>
-                    <Link to='/login' className='bg-warm-orange text-white px-5 py-2 rounded-md shadow-md'>Login</Link>
-                    <Link to='/signup' className='bg-warm-orange text-white px-5 py-2 rounded-md shadow-md'>Signup</Link>
-                </div>
-            ) : (
-                <div className='mr-8 hidden text-lg text-white md:block'>
-                    <Link to="/profile">Profile</Link>
-                </div>
-            )}
-        </header>
-    );
+      {/* Mobile Nav */}
+      <div
+        className={`absolute left-0 top-16 w-full bg-white flex-col px-12 py-6 overflow-hidden transition-all duration-500 md:hidden shadow z-10 border-t uppercase ${showMobileNav ? "max-h-96 opacity-100 flex" : "max-h-0 opacity-0 flex"}`}
+      >
+        <Link to="/" className="py-2">Home</Link>
+        <Link to="/recipes" className="py-2">Recipes</Link>
+        <Link to="/share" className="py-2">Share Recipe</Link>
+
+        <Link to="/profile" className="py-2">Profile</Link>
+
+        <Link to="/login" className="py-2">Login</Link>
+        <Link to="/register" className="py-2">Register</Link>
+      </div>
+    </nav>
+  );
 };
 
 export default Header;
