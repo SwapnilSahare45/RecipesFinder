@@ -30,7 +30,7 @@ const Header = () => {
         <Link to="/register" className="bg-fuchsia-500 text-white py-2 px-4 hover:bg-fuchsia-600 transition">Register</Link>
       </div>
 
-      <Link className="hidden mr-16 md:block">
+      <Link to="/profile" className="hidden mr-16 md:block">
         <FaCircleUser fill="#E12AFB" className="text-[32px]" />
       </Link>
 

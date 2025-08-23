@@ -1,6 +1,46 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useUserStore } from "../store/userStore";
+import validator from "validator";
 
 const Signup = () => {
+    const [cred, setCred] = useState({ name: "", email: "", password: "" });
+    const navigate = useNavigate();
+
+    const { register, error } = useUserStore();
+
+    const handleRegister = async () => {
+        if (!cred.name || !cred.email || !cred.password) {
+            return toast.error('All fields are required.')
+        }
+
+        if (!validator.isEmail(cred.email)) {
+            setCred({ ...cred, email: '' });
+            return toast.error('Invalid email format.');
+        }
+
+        if (!validator.isStrongPassword(cred.password)) {
+            return toast.error('Password must be at least 8 characters, include upper & lower case letters, and numbers.');
+        }
+
+        try {
+            const success = await register(cred);
+            if (success) {
+                toast.success('Registration successful.');
+                navigate("/login")
+            }
+        } catch (error) {
+            toast.error("Registration failed.")
+        }
+    }
+
+    useEffect(() => {
+        if (error) {
+            toast.error(error);
+        }
+    }, [error]);
+
     return (
         <div className="h-screen flex flex-col items-center justify-center relative overflow-hidden">
 
@@ -14,20 +54,27 @@ const Signup = () => {
                         type="text"
                         placeholder="name"
                         className='focus:outline-none ring-1 w-full p-2'
+                        value={cred.name}
+                        onChange={(e) => setCred({ ...cred, name: e.target.value })}
                     />
                     <input
                         type="email"
                         placeholder="email"
                         className='focus:outline-none ring-1 w-full p-2'
+                        value={cred.email}
+                        onChange={(e) => setCred({ ...cred, email: e.target.value })}
                     />
                     <input
                         type="password"
                         placeholder="password"
                         className='focus:outline-none ring-1 w-full p-2'
+                        value={cred.password}
+                        onChange={(e) => setCred({ ...cred, password: e.target.value })}
                     />
 
                     <button
                         className='w-full bg-fuchsia-500 text-white px-4 py-2 tracking-widest'
+                        onClick={handleRegister}
                     >
                         Register
                     </button>

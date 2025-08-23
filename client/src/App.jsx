@@ -1,16 +1,12 @@
-import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import Routes from './routes'
-import { UserProvider } from './context/UserContext'
-import { RecipeProvider } from './context/RecipeContext'
+import { ToastContainer, Bounce } from 'react-toastify';
+
 const App = () => {
   return (
     <BrowserRouter>
-      <UserProvider>
-        <RecipeProvider>
-          <Routes />
-        </RecipeProvider>
-      </UserProvider>
+      <Routes />
+      <ToastContainer position="top-right" autoClose={3000} transition={Bounce} />
     </BrowserRouter >
   )
 }
