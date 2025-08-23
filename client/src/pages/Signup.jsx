@@ -8,7 +8,7 @@ const Signup = () => {
     const [cred, setCred] = useState({ name: "", email: "", password: "" });
     const navigate = useNavigate();
 
-    const { register, error } = useUserStore();
+    const { register, isLoading, error } = useUserStore();
 
     const handleRegister = async () => {
         if (!cred.name || !cred.email || !cred.password) {
@@ -16,7 +16,6 @@ const Signup = () => {
         }
 
         if (!validator.isEmail(cred.email)) {
-            setCred({ ...cred, email: '' });
             return toast.error('Invalid email format.');
         }
 
@@ -73,10 +72,11 @@ const Signup = () => {
                     />
 
                     <button
-                        className='w-full bg-fuchsia-500 text-white px-4 py-2 tracking-widest'
+                        className={`w-full bg-fuchsia-500 text-white px-4 py-2 tracking-widest disabled:opacity-50`}
                         onClick={handleRegister}
+                        disabled={isLoading}
                     >
-                        Register
+                        {isLoading ? "Registering..." : "Register"}
                     </button>
 
                     <p>I already have an account?{" "}

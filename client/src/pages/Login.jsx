@@ -1,6 +1,32 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useUserStore } from '../store/userStore';
+import { toast } from 'react-toastify';
 
 const Login = () => {
+    const [cred, setCred] = useState({ email: "", password: "" });
+    const navigate = useNavigate();
+
+    const { login, isLoading, error } = useUserStore();
+
+    const handleLogin = async () => {
+        if (!cred.email || !cred.password) {
+            return toast.error('All fields are required.');
+        }
+
+        try {
+            const success = await login(cred);
+            if (success) {
+                toast.success("Login successful.");
+                navigate("/");
+            } else {
+                toast.error(error);
+            }
+        } catch (error) {
+            toast.error(error || 'Something went wrong!');
+        }
+    }
+
     return (
         <div className="h-screen flex flex-col items-center justify-center relative overflow-hidden">
 
@@ -14,16 +40,24 @@ const Login = () => {
                         type="email"
                         placeholder="email"
                         className='focus:outline-none ring-1 w-full p-2'
+                        value={cred.email}
+                        onChange={(e) => setCred({ ...cred, email: e.target.value })}
                     />
                     <input
                         type="password"
                         placeholder="password"
                         className='focus:outline-none ring-1 w-full p-2'
+                        value={cred.password}
+                        onChange={(e) => setCred({ ...cred, password: e.target.value })}
                     />
 
                     <button
-                        className='w-full bg-fuchsia-500 text-white px-4 py-2 tracking-widest'
-                    >Login</button>
+                        className={`w-full bg-fuchsia-500 text-white px-4 py-2 tracking-widest disabled:opacity-50`}
+                        onClick={handleLogin}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Logging in..." : "Login"}
+                    </button>
 
                     <p>Don't have an account?{" "}
                         <Link
