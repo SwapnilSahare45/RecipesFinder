@@ -7,13 +7,13 @@ const Footer = () => {
             <p className="text-center">Design & Developed by ❤️ Swapnil Sahare</p>
 
             <div className="flex items-center justify-center gap-4">
-                <a href="">
+                <a href="mailto:swapnilsahare430@gmail.com">
                     <FaEnvelope fill="#E12AFB" className="text-3xl"/>
                 </a>
-                <a href="">
+                <a href="https://www.linkedin.com/in/swapnil-sahare-06a803318" target="_blank" rel="noopener noreferrer">
                     <FaLinkedin fill="#E12AFB" className="text-3xl"/>
                 </a>
-                <a href="">
+                <a href="https://github.com/SwapnilSahare45" target="_blank" rel="noopener noreferrer">
                     <FaSquareGithub fill="#E12AFB" className="text-3xl"/>
                 </a>
             </div>
