@@ -1,21 +1,20 @@
 import jwt from "jsonwebtoken";
+import { User } from "../models/User.js";
 
-// Function/middleware for protect routes
-export const protectRoute = (req, res, next)=>{
-    // Extract token from autherization header 
-    const token = req.headers.authorization?.split(" ")[1];
+export const protect = async (req, res, next) => {
+    try {
+        const token = req.cookies.token || req.header('Authorization')?.replace('Bearer ', '');
 
-    // If token is not avaialbe return error message
-    if(!token){
-        return res.status(401).json({message: "No token, access denied"});
-    }
-    try{
-        // // If available then verify. If token successfully verfiy then user can access the route
+        if (!token) return res.status(401).json({ message: 'Unauthorized.' });
+
         const decode = jwt.verify(token, process.env.JWT_SECRET);
-        req.user= decode.id;
+        const user = await User.findById(decode.id).select("-password");
+
+        if (!user) return res.status(404).json({ message: 'User not found.' });
+
+        req.user = user;
         next();
-    }catch(error){
-        // If there is no token avaialbe or any other error ouccurred
-        res.status(401).json({message: "Invalid token"});
+    } catch (error) {
+        res.status(401).json({ message: "Invalid or expired token." });
     }
 }

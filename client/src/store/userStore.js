@@ -1,10 +1,11 @@
 import { create } from "zustand";
-import { loginService, registerService } from "../services/userServices";
+import { loginService, logoutService, profileService, registerService } from "../services/userServices";
 
 export const useUserStore = create((set) => ({
     user: null,
-    isAuthenticated: false,
+    isAuthenticated: null,
     isLoading: false,
+    isProfileLoading: false,
     error: null,
 
     register: async (data) => {
@@ -27,5 +28,21 @@ export const useUserStore = create((set) => ({
         } catch (error) {
             set({ error: error.response?.data?.message, isLoading: false });
         }
+    },
+
+    profile: async () => {
+        set({ isProfileLoading: true, error: null });
+        try {
+            const response = await profileService();
+            set({ user: response.data, isAuthenticated: true, isProfileLoading: false, error: null });
+        } catch (error) {
+            set({ error: error.response?.data?.message, isAuthenticated: false, isProfileLoading: false });
+        }
+    },
+
+    logout: async () => {
+        await logoutService();
+        set({ user: null, isAuthenticated: false, isProfileLoading: false, error: null })
+        return { success: true };
     }
 }))

@@ -2,9 +2,12 @@ import { Link } from "react-router-dom";
 import { MdMenu, MdClose } from "react-icons/md";
 import { useState } from "react";
 import { FaCircleUser } from "react-icons/fa6";
+import { useUserStore } from "../store/userStore";
 
 const Header = () => {
   const [showMobileNav, setShowMobileNav] = useState(false);
+
+  const { isAuthenticated } = useUserStore();
 
   const toggleNav = () => {
     setShowMobileNav(!showMobileNav);
@@ -25,14 +28,19 @@ const Header = () => {
       </ul>
 
       {/* Tablet & Desktop Auth */}
-      <div className="hidden gap-4 text-sm md:hidden md:pr-4">
-        <Link to="/login" className="bg-fuchsia-500 text-white py-2 px-4 hover:bg-fuchsia-600 transition">Login</Link>
-        <Link to="/register" className="bg-fuchsia-500 text-white py-2 px-4 hover:bg-fuchsia-600 transition">Register</Link>
-      </div>
+      {
+        ( isAuthenticated === null || !isAuthenticated) ? (
+          <div className="hidden gap-4 text-sm md:flex md:pr-4">
+            <Link to="/login" className="bg-fuchsia-500 text-white py-2 px-4 hover:bg-fuchsia-600 transition">Login</Link>
+            <Link to="/register" className="bg-fuchsia-500 text-white py-2 px-4 hover:bg-fuchsia-600 transition">Register</Link>
+          </div>
+        ) : (
 
-      <Link to="/profile" className="hidden mr-16 md:block">
-        <FaCircleUser fill="#E12AFB" className="text-[32px]" />
-      </Link>
+          <Link to="/profile" className="hidden mr-16 md:block">
+            <FaCircleUser fill="#E12AFB" className="text-[32px]" />
+          </Link>
+        )
+      }
 
       {/* Mobile Button */}
       <button onClick={toggleNav} className="pr-4 md:hidden">

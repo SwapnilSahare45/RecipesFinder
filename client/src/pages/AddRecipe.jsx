@@ -1,9 +1,52 @@
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import fruitsOnAir from "../assets/fruits-on-air.png"
-
+import { useRef, useState } from 'react'
+import { useRecipeStore } from '../store/recipeStore'
+import { toast } from "react-toastify"
 
 const AddRecipe = () => {
+
+    const [recipeData, setRecipeData] = useState({ title: '', cuisineType: '', dishCategory: '', readyIn: '', ingredients: '', instructions: '' });
+
+    const [recipeImage, setRecipeImage] = useState(null);
+    const recipeImageRef = useRef(null);
+
+    const { addRecipe, isLoading, error } = useRecipeStore();
+
+    const handleShare = async () => {
+
+        if (!recipeData.title || !recipeData.cuisineType || !recipeData.dishCategory || !recipeData.readyIn || !recipeData.ingredients || !recipeData.instructions) {
+            return toast.error('All fields are required.');
+        }
+
+        const data = new FormData();
+
+        data.append('title', recipeData.title);
+        data.append('recipeImage', recipeImage);
+        data.append('cuisineType', recipeData.cuisineType);
+        data.append('dishCategory', recipeData.dishCategory);
+        data.append('readyIn', recipeData.readyIn);
+        data.append('ingredients', recipeData.ingredients);
+        data.append('instructions', recipeData.instructions);
+
+        const success = await addRecipe(data);
+
+        if (success) {
+            toast.success('Recipe share successfully.');
+
+            setRecipeData({ title: '', cuisineType: '', dishCategory: '', readyIn: '', ingredients: '', instructions: '' });
+
+            setRecipeImage(null);
+
+            if (recipeImageRef.current) {
+                recipeImageRef.current.value = "";
+            }
+        } else {
+            toast.error(error);
+        }
+    }
+
     return (
         <div className='overflow-x-hidden'>
             <Header />
@@ -20,7 +63,10 @@ const AddRecipe = () => {
                             type="text"
                             id='title'
                             placeholder='recipe title'
-                            className='focus:outline-none ring-1 p-2' />
+                            className='focus:outline-none ring-1 p-2'
+                            value={recipeData.title}
+                            onChange={(e) => setRecipeData({ ...recipeData, title: e.target.value })}
+                        />
                     </div>
 
                     <div className='flex flex-col gap-1'>
@@ -29,12 +75,20 @@ const AddRecipe = () => {
                             type="file"
                             id='recipe-image'
                             placeholder='recipe image'
-                            className='focus:outline-none ring-1 p-2' />
+                            className='focus:outline-none ring-1 p-2'
+                            ref={recipeImageRef}
+                            onChange={(e) => setRecipeImage(e.target.files[0])}
+                        />
                     </div>
 
                     <div className='flex flex-col gap-1'>
                         <label htmlFor="cuisine-type">Cuisine Type</label>
-                        <select id="cuisine-type" className='focus:outline-none ring-1 p-[10px]'>
+                        <select
+                            id="cuisine-type"
+                            className='focus:outline-none ring-1 p-[10px]'
+                            value={recipeData.cuisineType}
+                            onChangeCapture={(e) => setRecipeData({ ...recipeData, cuisineType: e.target.value })}
+                        >
                             <option value="" selected disabled>select</option>\
                             <option value="indian">Indian</option>
                             <option value="italian">Italian</option>
@@ -53,7 +107,12 @@ const AddRecipe = () => {
 
                     <div className='flex flex-col gap-1'>
                         <label htmlFor="dish-category">Dish Category</label>
-                        <select id="dish-category" className='focus:outline-none ring-1 p-[10px]'>
+                        <select
+                            id="dish-category"
+                            className='focus:outline-none ring-1 p-[10px]'
+                            value={recipeData.dishCategory}
+                            onChange={(e) => setRecipeData({ ...recipeData, dishCategory: e.target.value })}
+                        >
                             <option value="" selected disabled>Select</option>
                             <option value="breakfast">Breakfast</option>
                             <option value="brunch">Brunch</option>
@@ -77,7 +136,10 @@ const AddRecipe = () => {
                             type="number"
                             id='ready-in'
                             placeholder='ready in (min)'
-                            className='focus:outline-none ring-1 p-2 no-spinner tracking-widest' />
+                            className='focus:outline-none ring-1 p-2 no-spinner tracking-widest'
+                            value={recipeData.readyIn}
+                            onChange={(e) => setRecipeData({ ...recipeData, readyIn: e.target.value })}
+                        />
                     </div>
 
                     <div className='flex flex-col gap-1 md:col-span-2'>
@@ -86,7 +148,10 @@ const AddRecipe = () => {
                             type="text"
                             id='ingredients'
                             placeholder='ingredients (comma seprated)'
-                            className='focus:outline-none ring-1 p-2' />
+                            className='focus:outline-none ring-1 p-2'
+                            value={recipeData.ingredients}
+                            onChange={(e) => setRecipeData({ ...recipeData, ingredients: e.target.value })}
+                        />
                     </div>
 
                     <div className='flex flex-col gap-1 md:col-span-2'>
@@ -95,10 +160,19 @@ const AddRecipe = () => {
                             type="text"
                             id='cooking-instructions'
                             placeholder='cooking instructions (full-stop seprated)'
-                            className='focus:outline-none ring-1 p-2' />
+                            className='focus:outline-none ring-1 p-2'
+                            value={recipeData.instructions}
+                            onChange={(e) => setRecipeData({ ...recipeData, instructions: e.target.value })}
+                        />
                     </div>
 
-                    <button className='bg-fuchsia-500 text-white py-2 tracking-widest uppercase cursor-pointer md:col-span-2'>Share</button>
+                    <button
+                        className='bg-fuchsia-500 text-white py-2 tracking-widest uppercase cursor-pointer md:col-span-2 disabled:opacity-50'
+                        onClick={handleShare}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Sharing..." : "Share"}
+                    </button>
 
                 </div>
 
